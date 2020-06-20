@@ -5,7 +5,7 @@ import psycopg2
 root = Tk()
 
 def srch_id(s_id):
-    conn = psycopg2.connect(dbname="postgres",user="postgres",password="442244",host="localhost",port="5432")
+    conn = psycopg2.connect(dbname="postgres",user="postgres",password="1234",host="localhost",port="5432")
     cur = conn.cursor()
     query = '''SELECT * FROM studentdb WHERE id=%s'''
     cur.execute(query,(s_id))
@@ -15,7 +15,7 @@ def srch_id(s_id):
     conn.close()
 
 def get_data(name,age,ad):
-    conn = psycopg2.connect(dbname="postgres",user="postgres",password="442244",host="localhost",port="5432")
+    conn = psycopg2.connect(dbname="postgres",user="postgres",password="1234",host="localhost",port="5432")
     cur = conn.cursor()
     query = '''INSERT INTO studentdb (Name, age, Address) VALUES (%s,%s,%s);'''
     cur.execute(query,(name,age,ad))
@@ -30,7 +30,7 @@ def dis_srch(row):
     listbox.insert(END,row)
 
 def dis_all():
-    conn = psycopg2.connect(dbname="postgres",user="postgres",password="442244",host="localhost",port="5432")
+    conn = psycopg2.connect(dbname="postgres",user="postgres",password="1234",host="localhost",port="5432")
     cur = conn.cursor()
     query = '''SELECT * FROM studentdb;'''
     cur.execute(query)
