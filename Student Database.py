@@ -35,7 +35,7 @@ def get_data(name,age,ad,Id,cg):
         cur.execute(query)
         conn.commit()
         conn.close()
-        get_data(name,age,ad, cg)
+        get_data(name,age,ad,Id,cg)
 
 def dis_srch(row):
     listbox = Listbox(frame,width=20,height=1)
