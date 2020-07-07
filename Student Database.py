@@ -5,24 +5,37 @@ import psycopg2
 root = Tk()
 
 def srch_id(s_id):
-    conn = psycopg2.connect(dbname="postgres",user="postgres",password="1234",host="localhost",port="5432")
-    cur = conn.cursor()
-    query = '''SELECT * FROM studentdb WHERE id=%s'''
-    cur.execute(query,(s_id))
-    row = cur.fetchone()
-    dis_srch(row)
-    conn.commit()
-    conn.close()
+    try:
+        conn = psycopg2.connect(dbname="postgres",user="postgres",password="1234",host="localhost",port="5432")
+        cur = conn.cursor()
+        query = '''SELECT * FROM studentdb WHERE id=%s'''
+        cur.execute(query,(s_id))
+        row = cur.fetchone()
+        dis_srch(row)
+        conn.commit()
+        conn.close()
+    except:
+        label = Label(frame,text="ID Not Found!")
+        label.grid(row=7,column=2)
 
-def get_data(name,age,ad):
-    conn = psycopg2.connect(dbname="postgres",user="postgres",password="1234",host="localhost",port="5432")
-    cur = conn.cursor()
-    query = '''INSERT INTO studentdb (Name, age, Address) VALUES (%s,%s,%s);'''
-    cur.execute(query,(name,age,ad))
-    print('Database Included')
-    conn.commit()
-    conn.close()
-    dis_all()
+def get_data(name,age,ad,Id,cg):
+    try:
+        conn = psycopg2.connect(dbname="postgres",user="postgres",password="1234",host="localhost",port="5432")
+        cur = conn.cursor()
+        query = '''INSERT INTO studentdb (Name, age, Address, id, cgpa) VALUES (%s,%s,%s,%s,%s);'''
+        cur.execute(query,(name,age,ad,Id,cg))
+        print('Database Included')
+        conn.commit()
+        conn.close()
+        dis_all()
+    except:
+        conn = psycopg2.connect(dbname="postgres",user="postgres",password="1234",host="localhost",port="5432")
+        cur = conn.cursor()
+        query = '''CREATE TABLE studentdb(Name TEXT, age INT, Address TEXT, id INT, cgpa FLOAT);'''
+        cur.execute(query)
+        conn.commit()
+        conn.close()
+        get_data(name,age,ad, cg)
 
 def dis_srch(row):
     listbox = Listbox(frame,width=20,height=1)
@@ -30,15 +43,24 @@ def dis_srch(row):
     listbox.insert(END,row)
 
 def dis_all():
-    conn = psycopg2.connect(dbname="postgres",user="postgres",password="1234",host="localhost",port="5432")
-    cur = conn.cursor()
-    query = '''SELECT * FROM studentdb;'''
-    cur.execute(query)
-    row = cur.fetchall()
-    listbox = Listbox(frame,width=20,height=8)
-    listbox.grid(row=10,column=1)
-    for x in row:
-        listbox.insert(END,x)
+    try:
+        conn = psycopg2.connect(dbname="postgres",user="postgres",password="1234",host="localhost",port="5432")
+        cur = conn.cursor()
+        query = '''SELECT * FROM studentdb;'''
+        cur.execute(query)
+        row = cur.fetchall()
+        listbox = Listbox(frame,width=30,height=8)
+        listbox.grid(row=12,column=1)
+        for x in row:
+            listbox.insert(END,x)
+    except:
+        conn = psycopg2.connect(dbname="postgres",user="postgres",password="1234",host="localhost",port="5432")
+        cur = conn.cursor()
+        query = '''CREATE TABLE studentdb(Name TEXT, age INT, Address TEXT, id INT, cgpa FLOAT);'''
+        cur.execute(query)
+        conn.commit()
+        conn.close()
+        dis_all()
 
 canvas = Canvas(root, height=480,width=900)
 canvas.pack()
@@ -64,18 +86,28 @@ label.grid(row=3,column=0)
 entry_ad = Entry(frame)
 entry_ad.grid(row=3,column=1)
 
-button = Button(frame,text="Submit", command= lambda:get_data(entry_name.get(),entry_age.get(),entry_ad.get()))
-button.grid(row=4,column=1)
+label = Label(frame,text="ID: ")
+label.grid(row=4,column=0)
+entry_id = Entry(frame)
+entry_id.grid(row=4,column=1)
+
+label = Label(frame,text="CGPA: ")
+label.grid(row=5,column=0)
+entry_cg = Entry(frame)
+entry_cg.grid(row=5,column=1)
+
+button = Button(frame,text="Submit", command= lambda:get_data(entry_name.get(),entry_age.get(),entry_ad.get(),entry_id.get(),entry_cg.get()))
+button.grid(row=6,column=1)
 
 label = Label(frame,text="Search Data")
-label.grid(row=5,column=1)
+label.grid(row=7,column=1)
 
 label = Label(frame,text="Search By ID: ")
-label.grid(row=6,column=0)
+label.grid(row=8,column=0)
 entry_srch = Entry(frame)
-entry_srch.grid(row=6,column=1)
+entry_srch.grid(row=8,column=1)
 button = Button(frame,text="Search", command= lambda: srch_id(entry_srch.get()))
-button.grid(row=6,column=2)
+button.grid(row=8,column=2)
 
 dis_all()
 root.mainloop()
